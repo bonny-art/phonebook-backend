@@ -1,16 +1,22 @@
 import express from "express";
-import { signupUser, loginUser } from "../controllers/usersControllers.js";
+import {
+  signupUser,
+  loginUser,
+  logoutUser,
+  currentUser,
+} from "../controllers/usersControllers.js";
 import { signupSchema, loginSchema } from "../schemas/userSchemas.js";
 import validateBody from "../helpers/validateBody.js";
+import { auth } from "../middlewares/auth.js";
 
 const userRouter = express.Router();
-//дописати міделвар для валідації боді + протестувати контролер!!!
+
 userRouter.post("/signup", validateBody(signupSchema), signupUser);
 
 userRouter.post("/login", validateBody(loginSchema), loginUser);
 
-userRouter.post("/logout");
+userRouter.post("/logout", auth, logoutUser);
 
-userRouter.get("/current");
+userRouter.get("/current", auth, currentUser);
 
 export default userRouter;

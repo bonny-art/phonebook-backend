@@ -26,6 +26,11 @@ export const createUser = async (userData) => {
   );
   return newUser;
 };
+
+export const logOutUser = async (id) => {
+  await User.findByIdAndUpdate(id, { token: "" });
+};
+
 export const signInUser = async (user) => {
   const token = await signToken(user._id);
   const updatedUser = await User.findByIdAndUpdate(

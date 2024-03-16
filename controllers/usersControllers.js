@@ -2,6 +2,7 @@ import {
   isUserExists,
   createUser,
   signInUser,
+  logOutUser,
 } from "../services/usersServices.js";
 import HttpError from "../helpers/HttpError.js";
 
@@ -40,6 +41,20 @@ export const loginUser = async (req, res, next) => {
   }
 };
 
-// const logoutUser = async (req, res, next) => {};
+export const logoutUser = async (req, res, next) => {
+  const { id } = req.user;
 
-// const currentUser = async (req, res, next) => {};
+  try {
+    await logOutUser(id);
+
+    res.sendStatus(204);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const currentUser = (req, res, next) => {
+  const { name, email } = req.user;
+
+  res.send({ name, email });
+};
