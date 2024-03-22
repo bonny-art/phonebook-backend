@@ -1,5 +1,6 @@
 import { User } from "../db/models/User.js";
 import jwt from "jsonwebtoken";
+import gravatar from "gravatar";
 import "dotenv/config";
 
 export const isUserExists = async (email) => {
@@ -15,7 +16,10 @@ const signToken = (id) => {
 };
 
 export const createUser = async (userData) => {
-  const user = new User({ ...userData });
+  const user = new User({
+    ...userData,
+    avatarUrl: gravatar.url(userData.email),
+  });
   await user.hashPassword();
   await user.save();
   const token = await signToken(user._id);

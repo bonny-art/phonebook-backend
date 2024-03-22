@@ -17,6 +17,9 @@ const userSchema = new Schema(
     token: {
       type: String,
     },
+    avatarUrl: {
+      type: String,
+    },
   },
   {
     versionKey: false,
