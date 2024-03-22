@@ -3,8 +3,12 @@ import {
   createUser,
   signInUser,
   logOutUser,
+  updateUser,
 } from "../services/usersServices.js";
 import HttpError from "../helpers/HttpError.js";
+import crypto from "crypto";
+import * as path from "node:path";
+import fs from "fs/promises";
 
 export const signupUser = async (req, res, next) => {
   try {
@@ -54,7 +58,29 @@ export const logoutUser = async (req, res, next) => {
 };
 
 export const currentUser = (req, res, next) => {
-  const { name, email } = req.user;
+  const { name, email, avatarUrl } = req.user;
 
-  res.send({ name, email });
+  res.send({ name, email, avatarUrl });
+};
+
+export const uploadAvatar = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      throw HttpError(400, "No file to upload");
+    }
+
+    const { path: tmpPath, originalname } = req.file;
+    const newName = `${crypto.randomUUID()}-${originalname}`;
+    const newPath = path.join(process.cwd(), "public", "avatars", newName);
+
+    await fs.rename(tmpPath, newPath);
+
+    const avatarUrl = path.join("avatars", newName);
+
+    const user = await updateUser(req.user._id, { avatarUrl });
+
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
 };
